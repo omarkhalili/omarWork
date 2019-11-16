@@ -25,17 +25,24 @@ public class CandidatesRestController {
 		this.mongoTemplate = mongoTemplate;
 	}
 
+	/**
+	 * Get all candidates sorted by re
+	 * @return
+	 */
 	@GetMapping("/candidates")
 	public List<Candidate> getCandidates(){
 		Sort sortByRegDate = Sort.by("regestrationDate").descending();
 		Query query = new Query();
 		query.with(sortByRegDate);
 		List<Candidate> candidates = mongoTemplate.find(query, Candidate.class);
-		
-		// List<Candidate> candidates = mongoTemplate.findAll(Candidate.class);
 		return candidates;
 	}
 	
+	/**
+	 * Gets candidate by id
+	 * @param candidateId
+	 * @return
+	 */
 	@GetMapping("/candidates/{candidateId}")
 	public Candidate getCandidate(@PathVariable String candidateId){
 		Candidate candidate = mongoTemplate.findById(candidateId, Candidate.class);

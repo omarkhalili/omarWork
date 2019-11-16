@@ -15,21 +15,21 @@ public class Candidate {
 	@Indexed(unique = true)
 	private String fullName;
 	private Date dateOfBirth;
-	private Date regestrationDate;
+	private Date registrationDate;
 	private Integer yearsOfExperience;
 	private Department department;
 
 	public Candidate() {
-		setRegestrationDate(new Date());
+		setRegistrationDate(new Date());
 	}
 
 	@PersistenceConstructor
-	public Candidate(String fullName, Date dateOfBirth, Date regestrationDate, Integer yearsOfExperience,
+	public Candidate(String fullName, Date dateOfBirth, Date registrationDate, Integer yearsOfExperience,
 			Department department) {
 		super();
 		this.fullName = fullName;
 		this.dateOfBirth = dateOfBirth;
-		this.regestrationDate = regestrationDate;
+		this.registrationDate = registrationDate;
 		this.yearsOfExperience = yearsOfExperience;
 		this.department = department;
 	}
@@ -58,12 +58,12 @@ public class Candidate {
 		this.dateOfBirth = dateOfBirth;
 	}
 
-	public Date getRegestrationDate() {
-		return regestrationDate;
+	public Date getRegistrationDate() {
+		return registrationDate;
 	}
 
-	public void setRegestrationDate(Date regestrationDate) {
-		this.regestrationDate = regestrationDate;
+	public void setRegistrationDate(Date registrationDate) {
+		this.registrationDate = registrationDate;
 	}
 
 	public Integer getYearsOfExperience() {
@@ -84,7 +84,7 @@ public class Candidate {
 
 	@Override
 	public String toString() {
-		return "Candidate [id=" + id + ", fullName=" + fullName + ", dateOfBirth=" + dateOfBirth + ", regestrationDate="
-				+ regestrationDate + ", yearsOfExperience=" + yearsOfExperience + ", department=" + department + "]";
+		return "Candidate [id=" + id + ", fullName=" + fullName + ", dateOfBirth=" + dateOfBirth + ", registrationDate="
+				+ registrationDate + ", yearsOfExperience=" + yearsOfExperience + ", department=" + department + "]";
 	}
 }
