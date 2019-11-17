@@ -2,6 +2,11 @@ package com.mbc.hr.hrSys.dao.documents;
 
 import java.util.Date;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Past;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceConstructor;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -12,11 +17,20 @@ public class Candidate {
 
 	@Id
 	private String id;
+	
+	@NotNull
 	@Indexed(unique = true)
 	private String fullName;
+	
+	@Past
 	private Date dateOfBirth;
+	
 	private Date registrationDate;
+	
+	@Min(value=1)
 	private Integer yearsOfExperience;
+	
+	@Valid
 	private Department department;
 
 	public Candidate() {

@@ -5,18 +5,21 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import com.mbc.hr.hrSys.rest.validation.Options;
+
 @Document(collection = "department")
 public class Department {
 
 	@Id
 	private ObjectId _id;
 
+	@Options(allowedOptions= {"IT", "HR", "Finance"}, message="Allowed options: IT, HR, Finance")
+	private String departmentName;
+
 	public Department() {
 		this._id = ObjectId.get();
 	}
-
-	private String departmentName;
-
+	
 	@PersistenceConstructor
 	public Department(String departmentName) {
 		this.departmentName = departmentName;

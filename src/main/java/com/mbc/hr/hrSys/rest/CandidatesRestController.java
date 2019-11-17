@@ -1,7 +1,8 @@
 package com.mbc.hr.hrSys.rest;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import javax.validation.Valid;
 
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -56,7 +57,7 @@ public class CandidatesRestController {
 	 * @return
 	 */
 	@PostMapping("/candidates")
-	public Candidate addCandidate(@RequestBody Candidate candidate) {
+	public Candidate addCandidate(@Valid @RequestBody Candidate candidate) {
 		return mongoTemplate.insert(candidate);
 	}
 }
