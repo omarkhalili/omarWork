@@ -12,8 +12,13 @@ import org.springframework.data.annotation.PersistenceConstructor;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+
+/**
+ * @author OAl-Khalili
+ *
+ */
 @Document(collection = "candidate")
-public class Candidate {
+public class Candidate{
 
 	@Id
 	private String id;
@@ -32,7 +37,9 @@ public class Candidate {
 	
 	@Valid
 	private Department department;
-
+	
+	private String cvFileName;
+	
 	public Candidate() {
 		setRegistrationDate(new Date());
 	}
@@ -96,9 +103,18 @@ public class Candidate {
 		this.department = department;
 	}
 
+	public String getCvFileName() {
+		return cvFileName;
+	}
+
+	public void setCvFileName(String cvFileName) {
+		this.cvFileName = cvFileName;
+	}
+
 	@Override
 	public String toString() {
 		return "Candidate [id=" + id + ", fullName=" + fullName + ", dateOfBirth=" + dateOfBirth + ", registrationDate="
-				+ registrationDate + ", yearsOfExperience=" + yearsOfExperience + ", department=" + department + "]";
+				+ registrationDate + ", yearsOfExperience=" + yearsOfExperience + ", department=" + department
+				+ ", cvFileName=" + cvFileName + "]";
 	}
 }

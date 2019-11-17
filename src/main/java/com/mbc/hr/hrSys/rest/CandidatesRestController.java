@@ -1,24 +1,35 @@
 package com.mbc.hr.hrSys.rest;
 
+import java.io.IOException;
 import java.util.List;
 
 import javax.validation.Valid;
 
-import org.springframework.data.domain.Sort;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.mbc.hr.hrSys.aws.AWSStorageManager;
+import com.mbc.hr.hrSys.dao.CandidateDao;
 import com.mbc.hr.hrSys.dao.documents.Candidate;
 
 @RestController
 @RequestMapping("/api")
 public class CandidatesRestController {
+
+	@Autowired
+	private AWSStorageManager awsStorageManager;
+
+	@Autowired
+	private CandidateDao candidateDao;
 
 	private MongoTemplate mongoTemplate;
 
@@ -27,27 +38,24 @@ public class CandidatesRestController {
 	}
 
 	/**
-	 * Get all candidates sorted by re
+	 * Get all candidates sorted by regestrationDate
+	 * 
 	 * @return
 	 */
 	@GetMapping("/candidates")
-	public List<Candidate> getCandidates(){
-		Sort sortByRegDate = Sort.by("regestrationDate").descending();
-		Query query = new Query();
-		query.with(sortByRegDate);
-		List<Candidate> candidates = mongoTemplate.find(query, Candidate.class);
-		return candidates;
+	public List<Candidate> getCandidates() {
+		return candidateDao.getAll(mongoTemplate);
 	}
-	
+
 	/**
 	 * Gets candidate by id
+	 * 
 	 * @param candidateId
 	 * @return
 	 */
 	@GetMapping("/candidates/{candidateId}")
-	public Candidate getCandidate(@PathVariable String candidateId){
-		Candidate candidate = mongoTemplate.findById(candidateId, Candidate.class);
-		return candidate;
+	public Candidate getCandidate(@PathVariable String candidateId) {
+		return candidateDao.getById(mongoTemplate, candidateId);
 	}
 
 	/**
@@ -58,6 +66,32 @@ public class CandidatesRestController {
 	 */
 	@PostMapping("/candidates")
 	public Candidate addCandidate(@Valid @RequestBody Candidate candidate) {
-		return mongoTemplate.insert(candidate);
+		return candidateDao.insert(mongoTemplate, candidate);
+	}
+
+	/**
+	 * Upload candidate CV
+	 * 
+	 * @param candidate
+	 * @return
+	 * @throws IOException
+	 */
+	@PostMapping("/candidateCV")
+	public boolean uploadCandidateCV(@RequestParam("candidateId") String candidateId,
+			@RequestParam("cvFile") MultipartFile cvFile) throws IOException {
+
+		Candidate candidate = candidateDao.getById(mongoTemplate, candidateId);
+		candidate.setCvFileName(candidateId + "_" + cvFile.getOriginalFilename());
+		candidateDao.save(mongoTemplate, candidate);
+
+		awsStorageManager.addCandidateCV(candidate.getCvFileName(), cvFile.getInputStream(),
+		awsStorageManager.createAWSMetaData(cvFile));
+		return true;
+	}
+
+	@GetMapping(value = "/candidateCV/{candidateId}")
+	public @ResponseBody byte[] downloadCandidateCV(@PathVariable String candidateId) throws IOException {
+		Candidate candidate = candidateDao.getById(mongoTemplate, candidateId);
+		return awsStorageManager.downloadCandidateCV(candidate.getCvFileName());
 	}
 }
